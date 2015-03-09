@@ -1,0 +1,3 @@
+name = Superfish iOS 8 workaround
+description = Work around a bug iOS 8 has with superfish
+core = 7.x

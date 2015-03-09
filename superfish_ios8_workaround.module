@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Fixes a bug in iOS 8 relating to superfish.
+ */
+
+/**
+ * Implements hook_block_view_alter().
+ *
+ * Ensure that the settings JavaScript doesn't use keys that look numeric,
+ * since that makes iOS think the Object is really an Array.
+ */
+function superfish_ios8_workaround_block_view_alter(&$data, $block) {
+  if ($block->module != 'superfish') {
+    return;
+  }
+
+  // Find attached JavaScript.
+  $js =& $data['content']['#attached']['js'];
+  foreach ($js as &$options) {
+    if ($options['type'] != 'setting') {
+      continue;
+    }
+
+    $setting =& $options['data']['superfish'];
+    foreach ($setting as $delta => $v) {
+      // Ensure keys do not look like integers.
+      $newdelta = "delta$delta";
+      $setting[$newdelta] = $v;
+      unset($setting[$delta]);
+    }
+  }
+}
